@@ -1,0 +1,328 @@
+/* ============================================================
+   table.xn — Dizayn tizimi (Claymorphism, Light/Dark)
+   Plus Jakarta Sans. Tokenlar [data-theme] orqali almashadi.
+   ============================================================ */
+
+:root,
+[data-theme='light'] {
+  /* Palitra */
+  --bg: #eef1f8;
+  --bg-tint-1: rgba(99, 102, 241, 0.10);
+  --bg-tint-2: rgba(56, 189, 248, 0.10);
+  --surface: #ffffff;
+  --surface-2: #f6f7fc;
+
+  --text: #1f2233;
+  --text-muted: #6b7194;
+  --text-soft: #9096b4;
+
+  --primary: #4f46e5;
+  --primary-600: #4338ca;
+  --primary-50: #eef0ff;
+  --accent: #38bdf8;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --primary-grad: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --border: rgba(79, 70, 229, 0.10);
+
+  /* Claymorphism soyalari */
+  --clay:
+    9px 9px 26px rgba(31, 38, 89, 0.10),
+    -7px -7px 20px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  --clay-sm:
+    5px 5px 14px rgba(31, 38, 89, 0.08),
+    -4px -4px 11px rgba(255, 255, 255, 0.85),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  --clay-inset:
+    inset 4px 4px 10px rgba(31, 38, 89, 0.10),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.85);
+  --clay-pressed:
+    inset 5px 5px 12px rgba(31, 38, 89, 0.13),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] {
+  --bg: #0f1119;
+  --bg-tint-1: rgba(99, 102, 241, 0.16);
+  --bg-tint-2: rgba(56, 189, 248, 0.12);
+  --surface: #181b27;
+  --surface-2: #1f2330;
+
+  --text: #e6e8f2;
+  --text-muted: #9aa0bf;
+  --text-soft: #6c7390;
+
+  --primary: #6366f1;
+  --primary-600: #818cf8;
+  --primary-50: rgba(99, 102, 241, 0.14);
+  --accent: #38bdf8;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  --primary-grad: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --border: rgba(255, 255, 255, 0.07);
+
+  --clay:
+    9px 9px 26px rgba(0, 0, 0, 0.5),
+    -6px -6px 18px rgba(255, 255, 255, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --clay-sm:
+    5px 5px 14px rgba(0, 0, 0, 0.45),
+    -4px -4px 11px rgba(255, 255, 255, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --clay-inset:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.03);
+  --clay-pressed:
+    inset 5px 5px 12px rgba(0, 0, 0, 0.55),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.03);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+h1, h2, h3, h4 { line-height: 1.25; font-weight: 700; letter-spacing: -0.02em; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* Raqamlar tekis tursin */
+.num, .kpi-value, td.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Layout yordamchilari ---------- */
+.container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.row { display: flex; align-items: center; gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 12px; }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; }
+.muted { color: var(--text-muted); }
+.soft { color: var(--text-soft); }
+
+/* ---------- Clay sirtlar ---------- */
+.clay {
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: var(--clay);
+}
+.clay-sm { background: var(--surface); border-radius: 18px; box-shadow: var(--clay-sm); }
+
+/* ---------- Tugmalar ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 0 22px;
+  border: none; border-radius: 15px; cursor: pointer;
+  font-weight: 600; font-size: 0.94rem; letter-spacing: -0.01em;
+  background: var(--surface); color: var(--text);
+  box-shadow: var(--clay-sm);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); box-shadow: var(--clay-pressed); }
+.btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.btn-primary {
+  background: var(--primary-grad); color: #fff;
+  box-shadow: 7px 7px 18px rgba(79, 70, 229, 0.32),
+              -4px -4px 12px rgba(255, 255, 255, 0.55),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+[data-theme='dark'] .btn-primary {
+  box-shadow: 7px 7px 20px rgba(0, 0, 0, 0.5),
+              inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-block { width: 100%; }
+.btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+/* Ikona tugma (44px tap target) */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; border: none; border-radius: 14px; cursor: pointer;
+  background: var(--surface); color: var(--text-muted);
+  box-shadow: var(--clay-sm);
+  transition: transform 0.12s ease, color 0.18s ease;
+}
+.icon-btn:hover { transform: translateY(-1px); color: var(--primary); }
+.icon-btn:active { box-shadow: var(--clay-pressed); }
+.icon-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* ---------- Maydonlar (inputs) ---------- */
+.field { display: flex; flex-direction: column; gap: 7px; }
+.label {
+  font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+  letter-spacing: 0.01em; padding-left: 4px;
+}
+.input {
+  width: 100%; min-height: 48px; padding: 0 16px;
+  border: none; border-radius: 14px;
+  background: var(--surface-2); color: var(--text);
+  box-shadow: var(--clay-inset);
+  transition: box-shadow 0.18s ease;
+}
+.input::placeholder { color: var(--text-soft); }
+.input:focus { outline: none; box-shadow: var(--clay-inset), 0 0 0 3px var(--primary-50); }
+.input[aria-invalid='true'] { box-shadow: var(--clay-inset), 0 0 0 3px rgba(239, 68, 68, 0.22); }
+
+/* ---------- Badge / chip ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  font-size: 0.74rem; font-weight: 700; letter-spacing: 0.02em;
+  background: var(--primary-50); color: var(--primary-600);
+}
+.badge-success { background: rgba(34, 197, 94, 0.14); color: var(--success); }
+.badge-danger { background: rgba(239, 68, 68, 0.14); color: var(--danger); }
+.badge-warning { background: rgba(245, 158, 11, 0.16); color: var(--warning); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 13px; cursor: pointer;
+  background: var(--surface); color: var(--text-muted); font-weight: 600; font-size: 0.88rem;
+  box-shadow: var(--clay-sm);
+  transition: transform 0.12s ease, color 0.18s ease;
+}
+.chip:hover { transform: translateY(-1px); }
+.chip[aria-selected='true'] { color: var(--primary-600); box-shadow: var(--clay-pressed); }
+
+/* ---------- Brend belgi ---------- */
+.brand { display: inline-flex; align-items: center; gap: 11px; }
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 13px;
+  display: grid; place-items: center;
+  background: var(--primary-grad);
+  box-shadow: 5px 5px 13px rgba(79, 70, 229, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.brand-name { font-size: 1.22rem; font-weight: 800; letter-spacing: -0.03em; }
+.brand-name .dot { color: var(--accent); }
+
+/* ---------- Ambient fon (login) ---------- */
+.aura { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+.aura span { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.7; }
+.aura .a1 { width: 380px; height: 380px; background: var(--bg-tint-1); top: -90px; left: -70px; }
+.aura .a2 { width: 320px; height: 320px; background: var(--bg-tint-2); bottom: -80px; right: -50px; }
+
+/* ---------- Skroll ---------- */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-soft); }
+
+/* ---------- Spinner ---------- */
+.spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.4); border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Erishimlilik / motion ---------- */
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ============================================================
+   Loader (yuqori progress bar) + Skeleton
+   ============================================================ */
+#tablexn-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 9999;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  box-shadow: 0 0 10px var(--primary); opacity: 0; pointer-events: none;
+}
+.skel { position: relative; overflow: hidden; background: var(--surface-2); border-radius: 14px; }
+.skel::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: shimmer 1.3s infinite;
+}
+[data-theme='dark'] .skel::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skel-kpi { height: 96px; } .skel-line { height: 16px; margin: 7px 0; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { .skel::after { animation: none; } #tablexn-progress { transition: none !important; } }
+
+/* ============================================================
+   Mobil moslashuv (global)
+   ============================================================ */
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  .container { padding: 0 14px; }
+  h1 { font-size: 1.5rem; }
+
+  /* Tugmalar va tap-zona */
+  .btn { min-height: 48px; padding: 0 18px; }
+  .icon-btn { width: 48px; height: 48px; }
+
+  /* Topbar zich bo'lmasin */
+  .brand-name { font-size: 1.05rem; }
+  .brand-mark { width: 36px; height: 36px; }
+
+  /* Gorizontal skroll qiluvchi segment (davr tanlagich) */
+  .seg { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; scrollbar-width: none; }
+  .seg::-webkit-scrollbar { display: none; }
+
+  /* Tanlagich/sana to'liq enlik */
+  .select, .date { width: 100%; min-width: 0; }
+  .control { width: 100%; }
+
+  /* Kartalardagi padding kichikroq */
+  .clay { border-radius: 20px; }
+}
+
+/* ============================================================
+   Mobil moslashuv — kuchaytirilgan (v1.0.0)
+   ============================================================ */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+@media (max-width: 640px) {
+  .topbar-inner { flex-wrap: wrap; row-gap: 10px; }
+  .topbar-actions { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .btn { min-height: 48px; }
+  .icon-btn { width: 48px; height: 48px; }
+
+  /* Maydon panjaralari bitta ustun */
+  .field-grid { grid-template-columns: 1fr !important; }
+  .charts { grid-template-columns: 1fr !important; }
+
+  /* Tanlagich/sana to'liq enlik */
+  .controls .control { width: 100%; }
+  .controls .select, .controls .date { width: 100%; min-width: 0; }
+
+  /* Davr segmenti suriladi */
+  .seg { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; scrollbar-width: none; }
+  .seg::-webkit-scrollbar { display: none; }
+
+  /* Jadval gorizontal suriladi, qisilmaydi */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { font-size: 0.84rem; }
+
+  /* Balans kartasi yig'iladi */
+  .bal-flow { gap: 8px; }
+  .bal-arrow { display: none; }
+  .bal-item { flex: 1 1 40%; min-width: 0; }
+
+  /* KPI 2 ustun */
+  .kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+@media (max-width: 420px) {
+  .container { padding: 0 12px; }
+  .kpi-row { grid-template-columns: 1fr !important; }
+  .brand-name { font-size: 1rem; }
+}

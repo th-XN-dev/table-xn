@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Boshqaruv paneli — table.xn</title>
+  <meta name="theme-color" content="#4f46e5" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="table.xn" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <script>
+    (function () {
+      var t = localStorage.getItem('tablexn.theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <style>
+    .topbar { position: sticky; top: 0; z-index: 20; padding: 13px 0; background: var(--bg); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center;
+      background: var(--primary-grad); color: #fff; font-weight: 800; box-shadow: var(--clay-sm); }
+    .user-meta { text-align: right; line-height: 1.3; }
+    .user-meta .org { font-weight: 700; font-size: 0.9rem; }
+    .user-meta .role { font-size: 0.72rem; color: var(--text-muted); text-transform: capitalize; }
+    .menu-wrap { position: relative; }
+    .menu { position: absolute; right: 0; top: 54px; min-width: 170px; padding: 8px; border-radius: 16px;
+      background: var(--surface); box-shadow: var(--clay); display: none; flex-direction: column; z-index: 30; }
+    .menu.open { display: flex; }
+    .menu button { text-align: left; border: none; background: transparent; cursor: pointer; padding: 11px 13px;
+      border-radius: 11px; font-weight: 600; font-size: 0.88rem; color: var(--text); }
+    .menu button:hover { background: var(--surface-2); }
+    .menu .danger { color: var(--danger); }
+
+    main.page { padding: 14px 0 70px; }
+    .stack-lg { display: flex; flex-direction: column; gap: 18px; }
+
+    /* Boshqaruv */
+    .controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; padding: 18px 22px; }
+    .control { display: flex; flex-direction: column; gap: 7px; }
+    .control .label { font-size: 0.76rem; font-weight: 600; color: var(--text-muted); padding-left: 4px; }
+    .select, .date { min-height: 46px; padding: 0 14px; border: none; border-radius: 13px; background: var(--surface-2);
+      color: var(--text); box-shadow: var(--clay-inset); font-weight: 600; cursor: pointer; }
+    .select { min-width: 160px; }
+    .seg { display: inline-flex; gap: 4px; padding: 5px; border-radius: 14px; background: var(--surface-2); box-shadow: var(--clay-inset); }
+    .seg button { border: none; background: transparent; cursor: pointer; padding: 9px 15px; border-radius: 10px;
+      font-weight: 600; font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+    .seg button[aria-selected='true'] { color: var(--primary-600); background: var(--surface); box-shadow: var(--clay-sm); }
+    .custom-range { display: none; gap: 10px; }
+    .custom-range.show { display: flex; }
+
+    /* KPI */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .kpi { padding: 18px 20px; }
+    .kpi .k-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+    .kpi .k-value { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px; }
+    .kpi .k-diff { font-size: 0.78rem; font-weight: 700; margin-top: 3px; }
+    .k-diff.up { color: var(--success); } .k-diff.down { color: var(--danger); } .k-diff.flat { color: var(--text-soft); }
+
+    /* Grafiklar */
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .chart-card { padding: 20px 22px; }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-card h3 { font-size: 1rem; margin-bottom: 14px; }
+    .chart-box { position: relative; height: 290px; }
+    .chart-box.sm { height: 260px; }
+
+    /* AI */
+    .panel { padding: 20px 22px; }
+    .panel h3 { font-size: 1rem; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; }
+    .ai-badge { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.04em; padding: 3px 9px; border-radius: 99px; background: var(--primary-grad); color: #fff; }
+    .msg-list { display: flex; flex-direction: column; gap: 9px; }
+    .msg-item { display: flex; gap: 10px; padding: 12px 15px; border-radius: 13px; font-size: 0.87rem; line-height: 1.45; }
+    .msg-item .m-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .lvl-danger { background: rgba(239,68,68,0.10); color: var(--danger); } .lvl-danger .m-dot{background:var(--danger)}
+    .lvl-warning { background: rgba(245,158,11,0.12); color: var(--warning); } .lvl-warning .m-dot{background:var(--warning)}
+    .lvl-success { background: rgba(34,197,94,0.12); color: var(--success); } .lvl-success .m-dot{background:var(--success)}
+    .lvl-info { background: var(--surface-2); color: var(--text-muted); } .lvl-info .m-dot{background:var(--text-soft)}
+    .all-good { color: var(--success); font-size: 0.88rem; font-weight: 600; }
+
+    /* Jadval */
+    .table-wrap { overflow-x: auto; }
+    table.rep { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    table.rep th { text-align: left; color: var(--text-muted); font-weight: 600; font-size: 0.76rem;
+      padding: 8px 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+    table.rep td { padding: 12px; border-top: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+    table.rep td.r, table.rep th.r { text-align: right; }
+    .empty-mini { color: var(--text-muted); text-align: center; padding: 24px; font-size: 0.9rem; }
+
+    /* Filiallar */
+    .branch-grid { display: flex; flex-wrap: wrap; gap: 11px; }
+    .branch-tile { display: flex; align-items: center; gap: 9px; padding: 11px 16px; border-radius: 13px;
+      background: var(--surface-2); box-shadow: var(--clay-inset); font-weight: 600; font-size: 0.9rem; }
+    .branch-tile .dot-i { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+    .add-branch { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .add-branch .input { flex: 1; min-width: 200px; }
+
+    .toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); padding: 13px 20px;
+      border-radius: 14px; background: var(--surface); box-shadow: var(--clay); font-weight: 600; font-size: 0.88rem;
+      opacity: 0; pointer-events: none; transition: all 0.28s ease; z-index: 50; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.ok { color: var(--success); } .toast.err { color: var(--danger); }
+
+    @media (max-width: 820px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } .charts { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .user-meta { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="4" stroke="#fff" stroke-width="2"/><path d="M3 9h18M9 9v11" stroke="#fff" stroke-width="2"/></svg></span>
+        <span class="brand-name">table<span class="dot">.xn</span></span>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn btn-primary" href="reports.html">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Hisobot
+        </a>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Mavzu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></button>
+        <a class="icon-btn" id="settingsLink" href="settings.html" aria-label="Sozlamalar" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></a>
+        <div class="menu-wrap">
+          <button id="userBtn" type="button" style="border:none;background:transparent;cursor:pointer;display:flex;align-items:center;gap:10px;">
+            <div class="user-meta"><div class="org" id="orgName">—</div><div class="role" id="roleName">—</div></div>
+            <span class="avatar" id="avatar">?</span>
+          </button>
+          <div class="menu" id="userMenu"><button class="danger" id="logoutBtn" type="button">Chiqish</button></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container stack-lg" id="app" hidden>
+      <!-- Boshqaruv -->
+      <section class="clay controls">
+        <div class="control"><span class="label">Filial</span><select class="select" id="branchSel"></select></div>
+        <div class="control"><span class="label">Davr</span>
+          <div class="seg" id="periodSeg" role="tablist">
+            <button data-p="day" role="tab">Kunlik</button>
+            <button data-p="week" role="tab">Haftalik</button>
+            <button data-p="month" role="tab" aria-selected="true">Oylik</button>
+            <button data-p="year" role="tab">Yillik</button>
+            <button data-p="custom" role="tab">Maxsus</button>
+          </div>
+        </div>
+        <div class="control" id="dateCtl"><span class="label">Sana</span><input class="date" id="dateSel" type="date" /></div>
+        <div class="control custom-range" id="customCtl">
+          <div class="control"><span class="label">Dan</span><input class="date" id="fromSel" type="date" /></div>
+          <div class="control"><span class="label">Gacha</span><input class="date" id="toSel" type="date" /></div>
+        </div>
+        <button class="btn" id="excelBtn" type="button" style="margin-left:auto;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9.5 13l5 6M14.5 13l-5 6"/></svg>
+          Excel
+        </button>
+      </section>
+
+      <section class="kpi-row" id="kpiRow"></section>
+
+      <section class="charts">
+        <div class="clay chart-card full"><h3 id="lineTitle">O'quvchilar dinamikasi</h3><div class="chart-box"><canvas id="lineCv"></canvas></div></div>
+        <div class="clay chart-card"><h3>Davr ko'rsatkichlari</h3><div class="chart-box sm"><canvas id="barCv"></canvas></div></div>
+        <div class="clay chart-card"><h3>Lead voronkasi</h3><div class="chart-box sm"><canvas id="dnCv"></canvas></div></div>
+      </section>
+
+      <section class="clay panel"><h3><span class="ai-badge">AI</span> Bugungi tahlil</h3><div class="msg-list" id="msgList"></div></section>
+
+      <section class="clay panel">
+        <h3>So'nggi hisobotlar</h3>
+        <div class="table-wrap"><table class="rep" id="repTable"></table></div>
+      </section>
+
+      <section class="clay panel">
+        <h3>Filiallar</h3>
+        <div class="branch-grid" id="branchGrid"></div>
+        <div class="add-branch" id="addBranch" hidden>
+          <input class="input" id="branchInput" type="text" placeholder="Yangi filial nomi" maxlength="60" />
+          <button class="btn btn-primary" id="addBranchBtn" type="button">Qo'shish</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="container" id="noBranch" hidden>
+      <section class="clay" style="padding:36px;text-align:center;">
+        <h3 style="margin-bottom:6px;">Hali filial yo'q</h3>
+        <p class="muted" style="margin-bottom:16px;">Boshlash uchun birinchi filialingizni qo'shing.</p>
+        <div class="add-branch" id="addBranch0" style="justify-content:center;">
+          <input class="input" id="branchInput0" type="text" placeholder="Filial nomi" maxlength="60" style="max-width:280px;" />
+          <button class="btn btn-primary" id="addBranchBtn0" type="button">Qo'shish</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module">
+    import { requireAuth, getProfile, signOut } from './js/api/auth.js';
+    import { listBranches, createBranch, initReportsSync } from './js/api/reportsApi.js';
+    import { getCustomRange, getDashboard } from './js/engines/reportEngine.js';
+    import { generateInsights } from './js/engines/aiEngine.js';
+    import { lineChart, barChart, doughnutChart } from './js/charts/chartFactory.js';
+    import { bindThemeToggle } from './js/utils/theme.js';
+    import { fmtInt, fmtPct } from './js/utils/format.js';
+    import { exportReportsXlsx } from './js/utils/excel.js';
+    import { showLoader, hideLoader } from './js/utils/loader.js';
+    import * as D from './js/utils/dates.js';
+
+    bindThemeToggle(document.getElementById('themeToggle'));
+    const $ = (id) => document.getElementById(id);
+
+    let profile = null, period = 'month', charts = {}, lastData = null;
+
+    function toast(text, type = 'ok') { const t = $('toast'); t.textContent = text; t.className = `toast show ${type}`; setTimeout(() => (t.className = 'toast'), 2600); }
+    const dShort = (iso) => new Date(iso).toLocaleDateString('uz-UZ', { day: '2-digit', month: 'short' });
+
+    // Profil menyu
+    const menu = $('userMenu');
+    $('userBtn').addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('open'); });
+    document.addEventListener('click', () => menu.classList.remove('open'));
+    $('logoutBtn').addEventListener('click', async () => { await signOut(); location.href = 'login.html'; });
+    function canManage() { return ['owner', 'admin'].includes(profile?.role); }
+
+    // Davr oralig'i
+    function ranges() {
+      const d = $('dateSel').value || D.today();
+      if (period === 'day') return { from: d, to: d, pf: D.addDays(d, -1), pt: D.addDays(d, -1) };
+      if (period === 'week') { const f = D.startOfWeek(d), t = D.endOfWeek(d); return { from: f, to: t, pf: D.addDays(f, -7), pt: D.addDays(f, -1) }; }
+      if (period === 'month') { const f = D.startOfMonth(d), t = D.endOfMonth(d); const pe = D.addDays(f, -1); return { from: f, to: t, pf: D.startOfMonth(pe), pt: D.endOfMonth(pe) }; }
+      if (period === 'year') { const f = D.startOfYear(d), t = D.endOfYear(d); const py = Number(f.slice(0, 4)) - 1; return { from: f, to: t, pf: `${py}-01-01`, pt: `${py}-12-31` }; }
+      return { from: $('fromSel').value, to: $('toSel').value, pf: null, pt: null };
+    }
+
+    function setPeriod(p) {
+      period = p;
+      [...$('periodSeg').children].forEach((b) => b.setAttribute('aria-selected', String(b.dataset.p === p)));
+      $('customCtl').classList.toggle('show', p === 'custom');
+      $('dateCtl').style.display = p === 'custom' ? 'none' : '';
+      load();
+    }
+
+    // KPI
+    function renderKpi(cur, prev) {
+      const sLast = cur.rows.length ? cur.rows[cur.rows.length - 1].students : 0;
+      const pLast = prev && prev.rows.length ? prev.rows[prev.rows.length - 1].students : null;
+      const cards = [
+        { label: "O'quvchilar", val: sLast, prev: pLast, fmt: fmtInt },
+        { label: 'Lidlar', val: cur.totals.leads, prev: prev ? prev.totals.leads : null, fmt: fmtInt },
+        { label: 'Shartnomalar', val: cur.totals.contracts, prev: prev ? prev.totals.contracts : null, fmt: fmtInt },
+        { label: 'Konversiya', val: cur.contractConversion, prev: prev ? prev.contractConversion : null, fmt: fmtPct, pct: true },
+      ];
+      $('kpiRow').innerHTML = cards.map((c) => {
+        let diff = '';
+        if (c.prev != null) {
+          const d = c.val - c.prev;
+          const cls = d > 0.05 ? 'up' : d < -0.05 ? 'down' : 'flat';
+          const sign = d > 0 ? '+' : '';
+          const txt = c.pct ? `${sign}${d.toFixed(1)}%` : `${sign}${fmtInt(d)}`;
+          diff = `<div class="k-diff ${cls}">${txt} oldingi davr</div>`;
+        }
+        return `<div class="clay kpi"><div class="k-label">${c.label}</div><div class="k-value num">${c.fmt(c.val)}</div>${diff}</div>`;
+      }).join('');
+    }
+
+    // Grafiklar
+    function destroyCharts() { Object.values(charts).forEach((c) => c?.destroy()); charts = {}; }
+    function renderCharts(cur) {
+      destroyCharts();
+      const labels = cur.rows.map((r) => dShort(r.report_date));
+      charts.line = lineChart($('lineCv'), { labels, data: cur.rows.map((r) => r.students) });
+      charts.bar = barChart($('barCv'), {
+        labels: ['Lidlar', 'Sifatli', 'Tashrif', 'Shartnoma', 'Ketgan'],
+        data: [cur.totals.leads, cur.totals.quality_leads, cur.totals.bd_visited, cur.totals.contracts, cur.totals.students_left],
+      });
+      charts.dn = doughnutChart($('dnCv'), {
+        labels: ['Lidlar', 'Sifatli lidlar', 'Shartnomalar'],
+        data: [cur.totals.leads, cur.totals.quality_leads, cur.totals.contracts],
+      });
+    }
+    document.addEventListener('themechange', () => { if (lastData) renderCharts(lastData); });
+
+    // Jadval
+    function renderTable(cur) {
+      const rows = [...cur.rows].reverse().slice(0, 10);
+      if (!rows.length) { $('repTable').innerHTML = `<tr><td class="empty-mini">Bu davr uchun hisobot yo'q.</td></tr>`; return; }
+      $('repTable').innerHTML =
+        `<thead><tr><th>Sana</th><th class="r">O'quvchi</th><th class="r">Lid</th><th class="r">Shartnoma</th><th class="r">Ketgan</th></tr></thead>` +
+        `<tbody>` + rows.map((r) => `<tr><td>${dShort(r.report_date)}</td><td class="r">${fmtInt(r.students)}</td><td class="r">${fmtInt(r.leads)}</td><td class="r">${fmtInt(r.contracts)}</td><td class="r">${fmtInt(r.students_left)}</td></tr>`).join('') + `</tbody>`;
+    }
+
+    // AI
+    function renderAI(insights) {
+      const list = $('msgList');
+      if (!insights.length) { list.innerHTML = `<div class="all-good">✓ Hammasi joyida — muhim ogohlantirish yo'q.</div>`; return; }
+      list.innerHTML = insights.map((i) => `<div class="msg-item lvl-${i.level}"><span class="m-dot"></span><span>${i.text}</span></div>`).join('');
+    }
+
+    // Yuklash
+    async function load() {
+      const branch = $('branchSel').value;
+      if (!branch) return;
+      const r = ranges();
+      if (!r.from || !r.to) return;
+      showLoader();
+      try {
+        const [cur, prev, dash] = await Promise.all([
+          getCustomRange(branch, r.from, r.to),
+          r.pf ? getCustomRange(branch, r.pf, r.pt) : Promise.resolve(null),
+          getDashboard(branch, D.today()),
+        ]);
+        lastData = cur;
+        renderKpi(cur, prev);
+        renderCharts(cur);
+        renderTable(cur);
+        renderAI(generateInsights(dash));
+      } catch (e) { toast('Ma\'lumotni yuklab bo\'lmadi.', 'err'); }
+      finally { hideLoader(); }
+    }
+
+    // Filiallar
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    async function loadBranchList() {
+      try {
+        const branches = await listBranches();
+        $('branchGrid').innerHTML = branches.map((b) => `<div class="branch-tile"><span class="dot-i"></span>${escapeHtml(b.name)}</div>`).join('');
+        $('addBranch').hidden = !canManage();
+      } catch {}
+    }
+    async function addBranch(inputId, btnId) {
+      const input = $(inputId), name = input.value.trim();
+      if (!name) { input.focus(); return; }
+      $(btnId).disabled = true;
+      try { await createBranch(name); input.value = ''; toast('Filial qo\'shildi.'); location.reload(); }
+      catch { toast('Qo\'shib bo\'lmadi.', 'err'); $(btnId).disabled = false; }
+    }
+    $('addBranchBtn').addEventListener('click', () => addBranch('branchInput', 'addBranchBtn'));
+    $('addBranchBtn0').addEventListener('click', () => addBranch('branchInput0', 'addBranchBtn0'));
+
+    // Init
+    (async () => {
+      const session = await requireAuth();
+      if (!session) return;
+      initReportsSync();
+      try { profile = await getProfile(); } catch {}
+      const orgName = profile?.organizations?.name || 'Tashkilot';
+      $('orgName').textContent = orgName;
+      $('roleName').textContent = profile?.role || 'a\'zo';
+      $('avatar').textContent = (profile?.full_name || orgName).trim().charAt(0).toUpperCase() || '?';
+      if (['owner', 'admin'].includes(profile?.role)) $('settingsLink').hidden = false;
+
+      let branches = [];
+      try { branches = await listBranches(); } catch {}
+      if (!branches.length) { $('noBranch').hidden = false; return; }
+
+      $('app').hidden = false;
+      $('branchSel').innerHTML = branches.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+      $('dateSel').value = D.today(); $('dateSel').max = D.today();
+      $('toSel').value = D.today(); $('fromSel').value = D.startOfMonth(D.today());
+
+      $('branchSel').addEventListener('change', load);
+      $('dateSel').addEventListener('change', load);
+      $('fromSel').addEventListener('change', load);
+      $('toSel').addEventListener('change', load);
+      [...$('periodSeg').children].forEach((b) => b.addEventListener('click', () => setPeriod(b.dataset.p)));
+
+      $('excelBtn').addEventListener('click', () => {
+        if (!lastData || !lastData.rows.length) { toast('Bu davrda hisobot yo\'q.', 'err'); return; }
+        const branchName = $('branchSel').selectedOptions[0]?.textContent || 'Filial';
+        const r = ranges();
+        const labels = { day: 'kunlik', week: 'haftalik', month: 'oylik', year: 'yillik', custom: 'maxsus' };
+        try { exportReportsXlsx({ rows: lastData.rows, branchName, periodLabel: labels[period] || 'hisobot', from: r.from, to: r.to }); }
+        catch { toast('Eksport qilib bo\'lmadi.', 'err'); }
+      });
+
+      await loadBranchList();
+      await load();
+    })();
+  </script>
+  <script type="module">import { registerSW } from './js/pwa/registerSW.js'; registerSW();</script>
+</body>
+</html>

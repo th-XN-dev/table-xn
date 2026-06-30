@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sozlamalar — table.xn</title>
+  <meta name="theme-color" content="#4f46e5" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="table.xn" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <script>
+    (function () { var t = localStorage.getItem('tablexn.theme'); if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', t); })();
+  </script>
+  <style>
+    .topbar { position: sticky; top: 0; z-index: 20; padding: 13px 0; background: var(--bg); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    main.page { padding: 16px 0 70px; }
+    .stack-lg { display: flex; flex-direction: column; gap: 18px; }
+    .panel { padding: 22px 24px; }
+    .panel > h2 { font-size: 1.12rem; margin-bottom: 4px; }
+    .panel > .sub { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 18px; }
+    .cur { font-size: 0.86rem; color: var(--text-muted); margin-bottom: 14px; }
+    .cur b { color: var(--text); }
+
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); box-shadow: var(--clay-inset); flex-wrap: wrap; }
+    .item .edit-name { flex: 1; min-width: 150px; min-height: 44px; padding: 0 13px; border: none; border-radius: 11px; background: var(--surface); color: var(--text); box-shadow: var(--clay-sm); font-weight: 600; }
+    .item .grow { flex: 1; min-width: 130px; }
+    .item .who .nm { font-weight: 700; font-size: 0.92rem; }
+    .item .who .em { font-size: 0.78rem; color: var(--text-muted); }
+    .role-sel { min-height: 42px; padding: 0 12px; border: none; border-radius: 11px; background: var(--surface); color: var(--text); box-shadow: var(--clay-sm); font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    .btn-sm { min-height: 44px; padding: 0 14px; font-size: 0.84rem; border-radius: 11px; }
+    .btn-ghost { background: var(--surface); box-shadow: var(--clay-sm); }
+    .btn-danger { color: var(--danger); background: var(--surface); box-shadow: var(--clay-sm); }
+    .inactive { opacity: 0.55; }
+    .pill { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: var(--primary-50); color: var(--primary-600); text-transform: capitalize; }
+    .pill.owner { background: rgba(245,158,11,0.16); color: var(--warning); }
+    .add-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .add-row .input { flex: 1; min-width: 170px; }
+    .empty-mini { color: var(--text-muted); font-size: 0.88rem; padding: 6px 2px; }
+    .ver { text-align: center; color: var(--text-soft); font-size: 0.78rem; padding: 6px; }
+    .install-hint { font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; }
+
+    .toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); padding: 13px 20px; border-radius: 14px; background: var(--surface); box-shadow: var(--clay); font-weight: 600; font-size: 0.88rem; opacity: 0; pointer-events: none; transition: all 0.28s ease; z-index: 50; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.ok { color: var(--success); } .toast.err { color: var(--danger); }
+
+    @media (max-width: 480px) { .add-row .input, .role-sel { width: 100%; min-width: 0; } .add-row .btn { width: 100%; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="btn btn-ghost" href="dashboard.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Panel</a>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="4" stroke="#fff" stroke-width="2"/><path d="M3 9h18M9 9v11" stroke="#fff" stroke-width="2"/></svg></span><span class="brand-name">table<span class="dot">.xn</span></span></div>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Mavzu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container stack-lg" id="app" hidden>
+
+      <!-- AKKAUNT (hamma uchun) -->
+      <section class="clay panel">
+        <h2>Akkaunt</h2>
+        <p class="sub">Foydalanuvchi nomingiz va parolingizni o'zgartiring.</p>
+        <div class="cur">Joriy: <b id="curUser">—</b> · rol: <b id="curRole">—</b></div>
+
+        <div class="add-row" style="margin-bottom:12px;">
+          <input class="input" id="newUser" type="text" placeholder="Yangi foydalanuvchi nomi" autocapitalize="none" spellcheck="false" />
+          <button class="btn btn-primary" id="userBtn" type="button">Nomni yangilash</button>
+        </div>
+        <div class="add-row">
+          <input class="input" id="newPass" type="password" placeholder="Yangi parol (kamida 6 ta)" minlength="6" autocomplete="new-password" />
+          <button class="btn btn-primary" id="passBtn" type="button">Parolni yangilash</button>
+        </div>
+      </section>
+
+      <!-- O'RNATISH (hamma uchun) -->
+      <section class="clay panel">
+        <h2>Ilovani o'rnatish</h2>
+        <p class="sub">table.xn'ni qurilmaga ilova sifatida o'rnating — tezroq ochiladi va offline ishlaydi.</p>
+        <button class="btn btn-primary" id="installBtn" type="button" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg> O'rnatish
+        </button>
+        <p class="install-hint">iPhone (Safari): Ulashish → "Bosh ekranga qo'shish". Android (Chrome): yuqoridagi tugma yoki menyu → "Ilovani o'rnatish".</p>
+      </section>
+
+      <!-- BOSHQARUV (owner/admin) -->
+      <div id="mgmt" hidden>
+        <div class="stack-lg">
+          <section class="clay panel">
+            <h2>Filiallar</h2>
+            <p class="sub">Nomini tahrirlang, faolsizlantiring yoki o'chiring.</p>
+            <div class="list" id="branchList"></div>
+            <div class="add-row" style="margin-top:16px;">
+              <input class="input" id="newBranch" type="text" placeholder="Yangi filial nomi" maxlength="60" />
+              <button class="btn btn-primary" id="addBranchBtn" type="button">Filial qo'shish</button>
+            </div>
+          </section>
+
+          <section class="clay panel">
+            <h2>Jamoa a'zolari</h2>
+            <p class="sub">Rollarni o'zgartiring yoki a'zoni o'chiring.</p>
+            <div class="list" id="memberList"></div>
+          </section>
+
+          <section class="clay panel">
+            <h2>Taklif qilish</h2>
+            <p class="sub">Foydalanuvchi nomini kiriting — o'sha nom bilan ro'yxatdan o'tgan kishi avtomatik tashkilotingizga qo'shiladi.</p>
+            <div class="add-row">
+              <input class="input" id="inviteEmail" type="text" placeholder="foydalanuvchi nomi" autocapitalize="none" spellcheck="false" />
+              <select class="role-sel" id="inviteRole"><option value="operator">Operator</option><option value="manager">Manager</option><option value="admin">Admin</option></select>
+              <button class="btn btn-primary" id="inviteBtn" type="button">Taklif qo'shish</button>
+            </div>
+            <div class="list" id="inviteList" style="margin-top:16px;"></div>
+          </section>
+        </div>
+      </div>
+
+      <div class="ver">table.xn · v<span id="appVer">—</span> · by project.xn</div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module">
+    import { requireAuth, getProfile, changePassword, changeUsername, toUsername, toEmail } from './js/api/auth.js';
+    import { listAllBranches, createBranch, updateBranch, setBranchActive, deleteBranch } from './js/api/reportsApi.js';
+    import { listMembers, updateMemberRole, removeMember, listInvites, createInvite, cancelInvite } from './js/api/teamApi.js';
+    import { bindThemeToggle } from './js/utils/theme.js';
+    import { initInstallPrompt } from './js/pwa/registerSW.js';
+    import { showLoader, hideLoader } from './js/utils/loader.js';
+    import { APP_VERSION } from './js/utils/version.js';
+
+    bindThemeToggle(document.getElementById('themeToggle'));
+    const $ = (id) => document.getElementById(id);
+    let me = null;
+    const ROLES = ['operator', 'manager', 'admin', 'owner'];
+    $('appVer').textContent = APP_VERSION;
+
+    function toast(t, type = 'ok') { const e = $('toast'); e.textContent = t; e.className = `toast show ${type}`; setTimeout(() => (e.className = 'toast'), 2600); }
+    function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+    // ---------- Filiallar ----------
+    async function loadBranches() {
+      const branches = await listAllBranches();
+      $('branchList').innerHTML = branches.map((b) => `
+        <div class="item ${b.is_active ? '' : 'inactive'}" data-id="${b.id}">
+          <input class="edit-name" value="${esc(b.name)}" maxlength="60" />
+          <button class="btn btn-ghost btn-sm act-save">Saqlash</button>
+          <button class="btn btn-ghost btn-sm act-toggle">${b.is_active ? 'Faolsizlantirish' : 'Faollashtirish'}</button>
+          <button class="btn btn-danger btn-sm act-del">O'chirish</button>
+        </div>`).join('') || `<div class="empty-mini">Hali filial yo'q.</div>`;
+      $('branchList').querySelectorAll('.item').forEach((row) => {
+        const id = row.dataset.id; const branch = branches.find((b) => b.id === id);
+        row.querySelector('.act-save').onclick = async () => { const name = row.querySelector('.edit-name').value.trim(); if (!name) return; try { await updateBranch(id, { name }); toast('Saqlandi.'); } catch { toast('Xato.', 'err'); } };
+        row.querySelector('.act-toggle').onclick = async () => { try { await setBranchActive(id, !branch.is_active); toast('Yangilandi.'); loadBranches(); } catch { toast('Xato.', 'err'); } };
+        row.querySelector('.act-del').onclick = async () => { if (!confirm(`"${branch.name}" va uning BARCHA hisobotlari o'chiriladi. Davom etasizmi?`)) return; try { await deleteBranch(id); toast('O\'chirildi.'); loadBranches(); } catch { toast('Xato.', 'err'); } };
+      });
+    }
+    $('addBranchBtn').onclick = async () => { const name = $('newBranch').value.trim(); if (!name) return; $('addBranchBtn').disabled = true; try { await createBranch(name); $('newBranch').value = ''; toast('Qo\'shildi.'); await loadBranches(); } catch { toast('Xato.', 'err'); } finally { $('addBranchBtn').disabled = false; } };
+
+    // ---------- A'zolar ----------
+    async function loadMembers() {
+      const members = await listMembers();
+      $('memberList').innerHTML = members.map((m) => {
+        const isMe = m.id === me.id; const isOwner = m.role === 'owner';
+        const opts = ROLES.map((r) => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r}</option>`).join('');
+        return `<div class="item" data-id="${m.id}">
+          <div class="who grow"><div class="nm">${esc(m.full_name || '—')}${isMe ? ' (siz)' : ''}</div><div class="em">${esc(toUsername(m.email) || '')}</div></div>
+          ${(isMe || isOwner) ? `<span class="pill ${isOwner ? 'owner' : ''}">${m.role}</span>` : `<select class="role-sel act-role">${opts}</select><button class="btn btn-danger btn-sm act-remove">O'chirish</button>`}
+        </div>`;
+      }).join('');
+      $('memberList').querySelectorAll('.item').forEach((row) => {
+        const id = row.dataset.id;
+        row.querySelector('.act-role')?.addEventListener('change', async (e) => { try { await updateMemberRole(id, e.target.value); toast('Rol o\'zgartirildi.'); } catch { toast('Xato.', 'err'); } });
+        row.querySelector('.act-remove')?.addEventListener('click', async () => { if (!confirm('Bu a\'zoni o\'chirasizmi?')) return; try { await removeMember(id); toast('O\'chirildi.'); loadMembers(); } catch { toast('Xato.', 'err'); } });
+      });
+    }
+
+    // ---------- Takliflar ----------
+    async function loadInvites() {
+      const invites = await listInvites();
+      $('inviteList').innerHTML = invites.map((i) => `
+        <div class="item" data-id="${i.id}"><div class="who grow"><div class="nm">${esc(toUsername(i.email))}</div><div class="em">Kutilmoqda · ${i.role}</div></div>
+        <button class="btn btn-danger btn-sm act-cancel">Bekor qilish</button></div>`).join('') || `<div class="empty-mini">Faol taklif yo'q.</div>`;
+      $('inviteList').querySelectorAll('.item').forEach((row) => { row.querySelector('.act-cancel').onclick = async () => { try { await cancelInvite(row.dataset.id); toast('Bekor qilindi.'); loadInvites(); } catch { toast('Xato.', 'err'); } }; });
+    }
+    $('inviteBtn').onclick = async () => { const u = $('inviteEmail').value.trim().replace(/\s+/g, ''); if (!u) { toast('Foydalanuvchi nomini kiriting.', 'err'); return; } $('inviteBtn').disabled = true; try { await createInvite(toEmail(u), $('inviteRole').value); $('inviteEmail').value = ''; toast('Taklif qo\'shildi.'); await loadInvites(); } catch { toast('Xato.', 'err'); } finally { $('inviteBtn').disabled = false; } };
+
+    // ---------- Akkaunt ----------
+    $('userBtn').onclick = async () => {
+      const u = $('newUser').value.trim().replace(/\s+/g, '');
+      if (!u) { toast('Yangi nom kiriting.', 'err'); return; }
+      $('userBtn').disabled = true;
+      try { await changeUsername(u); toast('Foydalanuvchi nomi yangilandi.'); $('curUser').textContent = u; $('newUser').value = ''; }
+      catch (e) { toast(e?.message?.includes('already') ? 'Bu nom band.' : 'O\'zgartirib bo\'lmadi.', 'err'); }
+      finally { $('userBtn').disabled = false; }
+    };
+    $('passBtn').onclick = async () => {
+      const p = $('newPass').value;
+      if (!p || p.length < 6) { toast('Parol kamida 6 ta belgidan iborat bo\'lsin.', 'err'); return; }
+      $('passBtn').disabled = true;
+      try { await changePassword(p); $('newPass').value = ''; toast('Parol yangilandi.'); }
+      catch { toast('Parolni o\'zgartirib bo\'lmadi.', 'err'); }
+      finally { $('passBtn').disabled = false; }
+    };
+
+    // ---------- Init ----------
+    (async () => {
+      const session = await requireAuth();
+      if (!session) return;
+      initInstallPrompt($('installBtn'));
+      $('app').hidden = false;
+      try { me = await getProfile(); } catch {}
+      $('curUser').textContent = me ? (toUsername(me.email) || '—') : '—';
+      $('curRole').textContent = me?.role || '—';
+
+      if (me && ['owner', 'admin'].includes(me.role)) {
+        $('mgmt').hidden = false;
+        showLoader();
+        try { await Promise.all([loadBranches(), loadMembers(), loadInvites()]); }
+        finally { hideLoader(); }
+      }
+    })();
+  </script>
+  <script type="module">import { registerSW } from './js/pwa/registerSW.js'; registerSW();</script>
+</body>
+</html>
